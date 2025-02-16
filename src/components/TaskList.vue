@@ -1,5 +1,11 @@
 <template>
-    <div style="margin: 20px;">
+    <div>
+        <div>
+            <router-link to="/add">
+                <button>Create Order</button>
+            </router-link>
+        </div>
+        <br>
         <table>
             <thead>
                 <tr>
@@ -11,12 +17,18 @@
             </thead>
             <tbody>
                 <tr v-for="(product, index) in products" :key="product.id">
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.supplier }}</td>
                     <td>
                         <button @click="viewProduct(product.id)">
                             View Details
+                        </button>
+                        <router-link :to="'/edit/' + product.id">
+                            <button>Edit</button>
+                        </router-link>
+                        <button @click="confirmDelete(product.id)">
+                            Delete
                         </button>
                     </td>
                 </tr>
@@ -35,38 +47,24 @@ export default {
     components: {
         ViewDetails
     },
+    emits: ["orderDeleted"],
+    props: {
+        products: Array,
+    },
     data() {
         return {
-            products: [
-                { id: 1, name: "Product 1", supplier: "John Doe", price: 25, qty: 1, total: 25 },
-                { id: 2, name: "Product 2", supplier: "Jane Doe", price: 30, qty: 2, total: 60 }
-            ],
             selectedProductId: null
         };
     },
     methods: {
         viewProduct(productId) {
             this.selectedProductId = productId;
+        },
+        confirmDelete(orderId) {
+            if (confirm("Are you sure you want to delete this order?")) {
+                this.$emit("orderDeleted", orderId);
+            }
         }
     }
 }
 </script>
-
-<style scoped>
-table {
-    width: 100%;
-}
-
-table,
-th,
-td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    padding: 5px;
-    text-align: center;
-}
-
-button {
-    cursor: pointer;
-}
-</style>
